@@ -22,11 +22,11 @@ import time
 
 # Bittensor
 import bittensor as bt
-
+import torch
 # Bittensor Validator Template:
 import template
 from template.validator import forward
-
+from typing import List
 # import base validator class which takes care of most of the boilerplate
 from template.base.validator import BaseValidatorNeuron
 
@@ -46,24 +46,25 @@ def read_bvh(file_path: str) -> np.ndarray:
     with open(file_path, 'r') as file:
         lines = file.readlines()
 
-    # Locate the beginning of the motion data                                                                                                                                                             
+    # Locate the beginning of the motion data
     motion_start = lines.index('MOTION\n')
     frames_line = lines[motion_start + 1]
     frame_count = int(frames_line.split()[1])
 
-    # Locate the line where the frame time is defined and the actual motion data starts                                                                                                                   
+    # Locate the line where the frame time is defined and the actual motion data starts
     frame_time_line = motion_start + 2
     motion_data_start = frame_time_line + 1
 
-    # Number of channels can be estimated from the number of columns in the first frame of motion data                                                                                                    
+    # Number of channels can be estimated from the number of columns in the first frame of motion data
     channel_count = len(lines[motion_data_start].split())
 
-    # Create an array to store the motion data                                                                                                                                                            
+    # Create an array to store the motion data
     motion_data = np.zeros((frame_count, channel_count))
 
-    # Fill the array with motion data                                                                                                                                                                     
+    # Fill the array with motion data
     for i in range(frame_count):
-        frame_data = np.array(list(map(float, lines[motion_data_start + i].split())))
+        frame_data = np.array(
+            list(map(float, lines[motion_data_start + i].split())))
         motion_data[i] = frame_data
 
     return motion_data
@@ -73,18 +74,19 @@ def compute_pose_differences(bvh_file1: str, bvh_file2: str) -> float:
     '''
     Returns a single scalar value as difference between 2 motion animations (BVH files)
     '''
-    # Read the BVH files - shape = (frame_count, anim_dim_count)                                                                                                                                                                                                                                                    
+    # Read the BVH files - shape = (frame_count, anim_dim_count)
     data1 = read_bvh(bvh_file1)
     data2 = read_bvh(bvh_file2)
 
-    # Check for the same number of frames and channels                                                                                                                                                                                                                      
+    # Check for the same number of frames and channels
     if data1.shape == data2.shape:
         err = data1 - data2
-        mse = np.mean(np.square(err), axis=-1) # (frame_count,) mse over dimensions of each frame of animaition                                                                                                                                                            
-        return np.mean(mse) # scalar - average mse over entire trajectory
+        # (frame_count,) mse over dimensions of each frame of animaition
+        mse = np.mean(np.square(err), axis=-1)
+        return np.mean(mse)  # scalar - average mse over entire trajectory
     else:
-        raise ValueError("BVH files do not have the same number of frames or channels")
-
+        raise ValueError(
+            "BVH files do not have the same number of frames or channels")
 
 
 class Validator(BaseValidatorNeuron):
@@ -115,6 +117,44 @@ class Validator(BaseValidatorNeuron):
         """
         # TODO(developer): Rewrite this function based on your protocol definition.
         return await forward(self)
+
+    def update_scores(self, rewards: torch.FloatTensor, uids: List[int]):
+        """Performs exponential moving average on the scores based on the rewards received from the miners."""
+
+        # Check if rewards contains NaN values.
+        if torch.isnan(rewards).any():
+            bt.logging.warning(f"NaN values detected in rewards: {rewards}")
+            # Replace any NaN values in rewards with 0.
+            rewards = torch.nan_to_num(rewards, 0)
+
+        # Move `rewards` tensor to the appropriate device if it's not already there
+        rewards = rewards.to(self.device)
+
+        # Check if `uids` is already a tensor and clone it to avoid the warning.
+        if isinstance(uids, torch.Tensor):
+            uids_tensor = uids.clone().detach()
+        else:
+            uids_tensor = torch.tensor(uids)
+
+        # Move `uids_tensor` to the appropriate device
+        uids_tensor = uids_tensor.to(self.device)
+
+        # Move `self.scores` to the appropriate device if it's not already there
+        self.scores = self.scores.to(self.device)
+
+        # Compute forward pass rewards, assumes uids are mutually exclusive.
+        # shape: [ metagraph.n ]
+        scattered_rewards: torch.FloatTensor = self.scores.scatter(
+            0, uids_tensor, rewards)
+
+        bt.logging.debug(f"Scattered rewards: {rewards}")
+
+        # Update scores with rewards produced by this step.
+        # shape: [ metagraph.n ]
+        alpha: float = self.config.neuron.moving_average_alpha
+        self.scores = alpha * scattered_rewards + (1 - alpha) * self.scores
+
+        bt.logging.debug(f"Updated moving avg scores: {self.scores}")
 
 
 # The main function parses the configuration and runs the validator.
