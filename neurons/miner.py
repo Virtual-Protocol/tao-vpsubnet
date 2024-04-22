@@ -124,6 +124,14 @@ class Miner(BaseMinerNeuron):
             f"Prioritizing {synapse.dendrite.hotkey} with value: ", prirority
         )
         return prirority
+    
+    def save_state(self):
+        # TODO: Check what does this do
+        pass
+
+    def load_state(self):
+        # TODO: Check what does this do
+        pass
 
 
 # This is the main function, which runs the miner.
