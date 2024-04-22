@@ -9,7 +9,7 @@ The evaluation protocol involves taking comparing the generated animation provid
 
 
 
-We can encode the entire motion and tkae the distance in the embedding space.
+We can encode the entire motion and take the distance in the embedding space.
 
 
 ## System Requirements
