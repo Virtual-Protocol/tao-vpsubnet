@@ -30,10 +30,9 @@ gdown https://drive.google.com/uc?id=1BAR712cVEqB8GR37fcEihRV_xOC-fZrZ
 ```
 
 ## Inference
-In the root of the EDGE directory, generate animation by providing an audio input in the form a .wav file.
+In the root of the EDGE directory, generate animation by providing an audio input in the form a .wav file. Copy our provided inference file adapted from test.py from EDGE over to the root of the EDGE directory for more automatic use to generate animation length of entire wav file. The test.py provided by EDGE samples a random snippet of output length specified.
 ```bash
-python test.py --music_dir "{output_folder}"/ --save_motions --motion_save_dir "{motion_folder}"
-python test.py --music_dir  --save_motions --motion_save_dir 
+python inference.py --music_dir "{output_folder}"/ --save_motions --motion_save_dir "{motion_folder}" --out_length -1
 ```
 
 You can find visualization of the animation in renders directory and the generated animation in smpl format as a .pkl file in the output directory.

@@ -1,7 +1,7 @@
 # Validator
 The role of the Validator is to start animation generation by providing a audio-prompt that has a corresponding motion animation (audio-animation pair). The Validator will provide the audio-prompt to the Miner, who will generate the motion animation. The Validator will then evaluate the generated motion animation.
 
-The validation mechanism will evolve in phases as the field matures and this subnet further develops. To start, Validators will select or sample audio-animation pairs from a library provided by the Subnet Provider. In future phases, Validators will be able to provide their own audio prompts and potentially generate reference animations using a more powerful model or run multi-modal visual language models as evaluators (i.e. AI feedback).
+The validation mechanism will evolve in phases as the field matures and this subnet further develops. To start, Validators will select or sample audio-animation pairs from a library provided by the Subnet Provider. The Subnet Provider will continue to update and increase the diversity of audio-animation prompts in the library. In future phases, Validators will be able to provide their own audio prompts and potentially generate reference animations using a more powerful model or run multi-modal visual language models as evaluators (i.e. AI feedback).
 
 
 ## Evaluation Protocol
