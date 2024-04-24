@@ -1,0 +1,14 @@
+flask
+git+https://github.com/rodrigo-castellon/jukemirlib.git
+wandb
+einops
+p-tqdm
+scikit-image 
+matplotlib 
+imageio 
+plotly 
+opencv-python
+gdown
+numpy
+librosa
+tqdm
