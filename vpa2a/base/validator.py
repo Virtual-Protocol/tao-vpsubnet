@@ -28,9 +28,8 @@ import bittensor as bt
 from typing import List
 from traceback import print_exception
 
-from template.base.neuron import BaseNeuron
-from template.mock import MockDendrite
-from template.utils.config import add_validator_args
+from vpa2a.base.neuron import BaseNeuron
+from vpa2a.base.utils.config import add_validator_args
 
 
 class BaseValidatorNeuron(BaseNeuron):
@@ -52,10 +51,7 @@ class BaseValidatorNeuron(BaseNeuron):
         self.hotkeys = copy.deepcopy(self.metagraph.hotkeys)
 
         # Dendrite lets us send messages to other nodes (axons) in the network.
-        if self.config.mock:
-            self.dendrite = MockDendrite(wallet=self.wallet)
-        else:
-            self.dendrite = bt.dendrite(wallet=self.wallet)
+        self.dendrite = bt.dendrite(wallet=self.wallet)
         bt.logging.info(f"Dendrite: {self.dendrite}")
 
         # Set up initial scoring weights for validation

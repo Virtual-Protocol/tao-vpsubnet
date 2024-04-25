@@ -1,7 +1,5 @@
 # The MIT License (MIT)
-# Copyright © 2023 Yuma Rao
-# TODO(developer): Set your name
-# Copyright © 2023 <your name>
+# Copyright © 2024 VirtualProtocol
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 # documentation files (the “Software”), to deal in the Software without restriction, including without limitation
@@ -23,12 +21,10 @@ import time
 # Bittensor
 import bittensor as bt
 import torch
-# Bittensor Validator Template:
-import template
-from template.validator import forward
+from vpa2a.validator.forward import forward
 from typing import List
 # import base validator class which takes care of most of the boilerplate
-from template.base.validator import BaseValidatorNeuron
+from vpa2a.base.validator import BaseValidatorNeuron
 
 import numpy as np
 
@@ -104,20 +100,10 @@ class Validator(BaseValidatorNeuron):
         bt.logging.info("load_state()")
         self.load_state()
 
-        # TODO(developer): Anything specific to your use case you can do here
 
     async def forward(self):
-        """
-        Validator forward pass. Consists of:
-        - Generating the query
-        - Querying the miners
-        - Getting the responses
-        - Rewarding the miners
-        - Updating the scores
-        """
-        # TODO(developer): Rewrite this function based on your protocol definition.
         return await forward(self)
-
+    
     def update_scores(self, rewards: torch.FloatTensor, uids: List[int]):
         """Performs exponential moving average on the scores based on the rewards received from the miners."""
 
@@ -155,6 +141,7 @@ class Validator(BaseValidatorNeuron):
         self.scores = alpha * scattered_rewards + (1 - alpha) * self.scores
 
         bt.logging.debug(f"Updated moving avg scores: {self.scores}")
+
 
 
 # The main function parses the configuration and runs the validator.

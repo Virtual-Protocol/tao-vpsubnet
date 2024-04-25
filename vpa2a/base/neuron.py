@@ -23,10 +23,9 @@ import bittensor as bt
 from abc import ABC, abstractmethod
 
 # Sync calls set weights and also resyncs the metagraph.
-from template.utils.config import check_config, add_args, config
-from template.utils.misc import ttl_get_block
-from template import __spec_version__ as spec_version
-from template.mock import MockSubtensor, MockMetagraph
+from vpa2a.base.utils.config import check_config, add_args, config
+from vpa2a.base.utils.misc import ttl_get_block
+from vpa2a import __spec_version__ as spec_version
 
 
 class BaseNeuron(ABC):
@@ -66,7 +65,7 @@ class BaseNeuron(ABC):
         self.check_config(self.config)
 
         # Set up logging with the provided configuration and directory.
-        bt.logging(config=self.config, logging_dir=self.config.full_path)
+        bt.logging(config=self.config.logging, logging_dir=self.config.full_path)
 
         # If a gpu is required, set the device to cuda:N (e.g. cuda:0)
         self.device = self.config.neuron.device
@@ -79,18 +78,9 @@ class BaseNeuron(ABC):
         bt.logging.info("Setting up bittensor objects.")
 
         # The wallet holds the cryptographic key pairs for the miner.
-        if self.config.mock:
-            self.wallet = bt.MockWallet(config=self.config)
-            self.subtensor = MockSubtensor(
-                self.config.netuid, wallet=self.wallet
-            )
-            self.metagraph = MockMetagraph(
-                self.config.netuid, subtensor=self.subtensor
-            )
-        else:
-            self.wallet = bt.wallet(config=self.config)
-            self.subtensor = bt.subtensor(config=self.config)
-            self.metagraph = self.subtensor.metagraph(self.config.netuid)
+        self.wallet = bt.wallet(config=self.config)
+        self.subtensor = bt.subtensor(config=self.config)
+        self.metagraph = self.subtensor.metagraph(self.config.netuid)
 
         bt.logging.info(f"Wallet: {self.wallet}")
         bt.logging.info(f"Subtensor: {self.subtensor}")

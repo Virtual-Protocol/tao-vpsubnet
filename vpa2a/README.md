@@ -11,12 +11,3 @@ This provides updated documentation to setup the development and inference envir
  - NVIDIA RTX 3090
   
 
-## Prerequisites
-
-1. Conda environment ready `conda create -y -n edge python=3.9`
-2. libsndfile package installed `sudo apt-get install libsndfile1`
-
-## Installation and Environment Setup
-
-1. Activate the Conda environment `conda activate edge`
-2. Run the installation script `bash install.sh`

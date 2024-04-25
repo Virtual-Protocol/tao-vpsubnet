@@ -1,7 +1,5 @@
 # The MIT License (MIT)
-# Copyright © 2023 Yuma Rao
-# TODO(developer): Set your name
-# Copyright © 2023 <your name>
+# Copyright © 2024 VirtualProtocol
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 # documentation files (the “Software”), to deal in the Software without restriction, including without limitation
@@ -17,38 +15,31 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
 
-import torch
-from typing import List
+import bittensor as bt
 
 
-def reward(query: int, response: int) -> float:
+class ATASynapse(bt.Synapse):
     """
-    Reward the miner response to the dummy request. This method returns a reward
-    value for the miner, which is used to update the miner's score.
+    This protocol helps in handling request and response communication between
+    the miner and the validator.
 
-    Returns:
-    - float: The reward value for the miner.
+    Attributes:
+    - audio_input: Base64 encoded audio input
+    - animation_output: The animation output
     """
 
-    return 1.0 if response == query * 2 else 0
+    # Required request input, filled by sending dendrite caller.
+    audio_input: str = ""
 
+    # Optional request output, filled by receiving axon.
+    animation_output: str = ""
 
-def get_rewards(
-    self,
-    query: int,
-    responses: List[float],
-) -> torch.FloatTensor:
-    """
-    Returns a tensor of rewards for the given query and responses.
-
-    Args:
-    - query (int): The query sent to the miner.
-    - responses (List[float]): A list of responses from the miner.
-
-    Returns:
-    - torch.FloatTensor: A tensor of rewards for the given query and responses.
-    """
-    # Get all the reward results by iteratively calling your reward() function.
-    return torch.FloatTensor(
-        [reward(query, response) for response in responses]
-    ).to(self.device)
+    def deserialize(self) -> str:
+        """
+        Deserialize the dummy output. This method retrieves the response from
+        the miner in the form of animation_output, deserializes it and returns it
+        as the output of the dendrite.query() call.
+        """
+        print("@@@@Deserialising")
+        print(self)
+        return self.animation_output

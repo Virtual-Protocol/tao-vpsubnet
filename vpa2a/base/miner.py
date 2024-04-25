@@ -24,8 +24,8 @@ import traceback
 
 import bittensor as bt
 
-from template.base.neuron import BaseNeuron
-from template.utils.config import add_miner_args
+from vpa2a.base.neuron import BaseNeuron
+from vpa2a.base.utils.config import add_miner_args
 
 
 class BaseMinerNeuron(BaseNeuron):
@@ -190,3 +190,9 @@ class BaseMinerNeuron(BaseNeuron):
 
         # Sync the metagraph.
         self.metagraph.sync(subtensor=self.subtensor)
+
+    def save_state(self):
+        pass
+
+    def load_state(self):
+        pass

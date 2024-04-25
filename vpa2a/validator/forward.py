@@ -1,7 +1,5 @@
 # The MIT License (MIT)
-# Copyright © 2023 Yuma Rao
-# TODO(developer): Set your name
-# Copyright © 2023 <your name>
+# Copyright © 2024 VirtualProtocol
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 # documentation files (the “Software”), to deal in the Software without restriction, including without limitation
@@ -19,36 +17,34 @@
 
 import bittensor as bt
 
-from template.protocol import Dummy
-from template.validator.reward import get_rewards
-from template.utils.uids import get_random_uids
-
+from vpa2a.protocol import ATASynapse
+from vpa2a.validator.reward import get_rewards
+from vpa2a.base.utils.uids import get_random_uids
+import os
 
 async def forward(self):
-    """
-    The forward function is called by the validator every time step.
+    print("forwarding")
+    #root_dir = os.path.dirname(os.path.abspath(__file__))
+    #with open(f"{root_dir}/song.b64", "r") as file:
+    #    input = file.read()
 
-    It is responsible for querying the network and scoring the responses.
-
-    Args:
-        self (:obj:`bittensor.neuron.Neuron`): The neuron object which contains all the necessary state for the validator.
-
-    """
     # TODO(developer): Define how the validator selects a miner to query, how often, etc.
     # get_random_uids is an example method, but you can replace it with your own.
     miner_uids = get_random_uids(self, k=self.config.neuron.sample_size)
+    synapse = ATASynapse(audio_input="123")
 
     # The dendrite client queries the network.
     responses = await self.dendrite(
         # Send the query to selected miner axons in the network.
         axons=[self.metagraph.axons[uid] for uid in miner_uids],
         # Construct a dummy query. This simply contains a single integer.
-        synapse=Dummy(dummy_input=self.step),
+        synapse=synapse,
         # All responses have the deserialize function called on them before returning.
         # You are encouraged to define your own deserialization function.
-        deserialize=True,
+        deserialize=False,
     )
-
+    print("Returned")
+    print(responses)
     # Log the results for monitoring purposes.
     bt.logging.info(f"Received responses: {responses}")
 

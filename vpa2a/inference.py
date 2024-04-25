@@ -1,3 +1,20 @@
+# The MIT License (MIT)
+# Copyright © 2024 VirtualProtocol
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+# documentation files (the “Software”), to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+# the Software.
+
+# THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+# THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
+
 import glob
 import os
 from functools import cmp_to_key
@@ -5,12 +22,10 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 import random
 
-import jukemirlib
 import numpy as np
 import torch
 from tqdm import tqdm
 
-from EDGE.args import parse_test_opt
 from EDGE.data.slice import slice_audio
 from EDGE.EDGE import EDGE
 from EDGE.data.audio_extraction.baseline_features import extract as baseline_extract
@@ -40,14 +55,24 @@ stringintkey = cmp_to_key(stringintcmp_)
 
 
 def inference(wav_file):
-    opt = parse_test_opt()
+    opt = type('DynamicObject', (object,), {
+        "feature_type": "jukebox",
+        "out_length": 30,
+        "processed_data_dir":"data/dataset_backups/",
+        "render_dir": "",
+        "checkpoint": "checkpoint.pt",
+        "save_motions": True,
+        "cache_features": False,
+        "no_render": True,
+        "use_cached_features": False,
+        "feature_cache_dir": "cached_features/",
+        "motion_save_dir":""
+    })
     root_dir = os.path.dirname(os.path.abspath(__file__))
     opt.motion_save_dir = f"{root_dir}/data/outputs"
     opt.render_dir = f"{root_dir}/data/outputs"
     opt.checkpoint = f"{root_dir}/EDGE/checkpoint.pt"
     opt.out_length = -1
-    opt.save_motions = True
-    opt.no_render = True
 
     feature_func = juke_extract if opt.feature_type == "jukebox" else baseline_extract
 
