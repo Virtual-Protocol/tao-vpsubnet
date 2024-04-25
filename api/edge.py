@@ -19,7 +19,7 @@
 
 import bittensor as bt
 from typing import List, Optional, Union, Any, Dict
-from neurons.protocol import ATASynapse
+from vpa2a.protocol import ATASynapse
 from bittensor.subnets import SubnetsAPI
 import base64
 
