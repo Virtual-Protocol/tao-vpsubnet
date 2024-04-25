@@ -19,3 +19,6 @@ conda install -y pytorch3d -c pytorch3d
 
 echo "Installing Python packages"
 pip install -r requirements.txt
+
+echo "Installing postprocessor"
+git clone https://github.com/KosukeFukazawa/smpl2bvh.git

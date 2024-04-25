@@ -4,14 +4,12 @@ import time
 import typing
 import bittensor as bt
 
-# Bittensor Miner Template:
-import template
-
 # import base miner class which takes care of most of the boilerplate
 from template.base.miner import BaseMinerNeuron
 
 # Inference usage
 from inference import inference
+import postprocess
 from protocol import ATASynapse
 import base64
 import uuid
@@ -45,12 +43,20 @@ class EDGEMiner(BaseMinerNeuron):
         """
         
         # Convert the audio input into wav file
+        print("Received synapse")
         root_dir = os.path.dirname(os.path.abspath(__file__))
         uid = str(uuid.uuid4())
         file_path = f"{root_dir}/{uid}.wav"
         self.decode_and_save_wav(synapse.audio_input, file_path)
-        res = inference(file_path)
-        synapse.animation_output = res
+        print(f"Inferencing {file_path}")
+        pkl_file = inference(file_path)
+        bvh_path = f"{root_dir}/data/outputs/{uid}.bvh"
+        print(f"Post-processing {pkl_file}")
+        fixed_pkl_file = postprocess.postprocess_pkl(pkl_file)
+        postprocess.pkl2bvh(fixed_pkl_file, bvh_path)
+        with open(bvh_path, 'r') as file:
+            synapse.animation_output = file.read()
+
         return synapse
 
     async def blacklist(
