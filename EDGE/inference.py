@@ -91,7 +91,7 @@ def test(opt):
                 rand_idx = random.randint(0, len(file_list) - sample_size)
             else:
                 rand_idx = 0
-                sample_size = leng(file_list)
+                sample_size = len(file_list)
             cond_list = []
             # generate juke representations                                                                                                                                                                                                                                 
             print(f"Computing features for {wav_file}")
