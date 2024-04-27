@@ -18,7 +18,7 @@
 import bittensor as bt
 
 from vpa2a.protocol import VPA2ASynapse
-from reward import get_rewards
+from .reward import get_rewards
 from vpa2a.base.utils.uids import get_random_uids
 import os
 import requests
