@@ -16,3 +16,6 @@ We can encode the entire motion and tkae the distance in the embedding space.
 Currently, Validators do not need much will need disk space and compute power. However, in future evaluation protocols and validation phases, it is recommended to have at least 50 GB of disk space and GPU with atleast 24 GB of VRAM for inference.
 
 
+## Running the validator
+
+Run `bash scripts/start_validator.sh`

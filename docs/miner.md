@@ -29,4 +29,5 @@ Miners will need disk space and compute power to both store the model as well as
 ## Running the miner
 
 1. Activate the Conda environment `conda activate vpa2a`
-2. Run `bash scripts/start_miner.sh`
+2. Start up the inferencing API service `bash scripts/start_api.py`
+3. Run `bash scripts/start_miner.sh`
