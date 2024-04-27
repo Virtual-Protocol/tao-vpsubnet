@@ -16,9 +16,9 @@
 # DEALINGS IN THE SOFTWARE.
 
 import bittensor as bt
+import typing
 
-
-class ATASynapse(bt.Synapse):
+class VPA2ASynapse(bt.Synapse):
     """
     This protocol helps in handling request and response communication between
     the miner and the validator.
@@ -26,20 +26,20 @@ class ATASynapse(bt.Synapse):
     Attributes:
     - audio_input: Base64 encoded audio input
     - animation_output: The animation output
+    - input_type: Type indicator: 'data' for base64 encoded audio, 'url' for audio URL
     """
+
+    input_type: str = 'url'
 
     # Required request input, filled by sending dendrite caller.
     audio_input: str = ""
 
     # Optional request output, filled by receiving axon.
-    animation_output: str = ""
+    animation_output: typing.Optional[str] = ""
 
     def deserialize(self) -> str:
-        """
-        Deserialize the dummy output. This method retrieves the response from
-        the miner in the form of animation_output, deserializes it and returns it
-        as the output of the dendrite.query() call.
-        """
-        print("@@@@Deserialising")
-        print(self)
         return self.animation_output
+    
+    def is_url(self) -> bool:
+        """ Check if the input is a URL. """
+        return self.input_type == 'url'

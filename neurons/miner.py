@@ -25,15 +25,15 @@ from vpa2a.base.miner import BaseMinerNeuron
 # Inference usage
 from vpa2a.inference import inference
 import vpa2a.postprocess
-from protocol import ATASynapse
+from vpa2a.protocol import VPA2ASynapse
 import base64
 import uuid
 import os
 
-class EDGEMiner(BaseMinerNeuron):
+class VPA2AMiner(BaseMinerNeuron):
 
     def __init__(self, config=None):
-        super(EDGEMiner, self).__init__(config=config)
+        super(VPA2AMiner, self).__init__(config=config)
 
     def decode_and_save_wav(self, audio_input, output_path):
         # Decode base64 audio input
@@ -45,8 +45,8 @@ class EDGEMiner(BaseMinerNeuron):
  
 
     async def forward(
-        self, synapse: ATASynapse
-    ) -> ATASynapse:
+        self, synapse: VPA2ASynapse
+    ) -> VPA2ASynapse:
         """
         Processes the incoming 'ATASynapse' synapse by inferencing animation data from audio input.
 
@@ -82,7 +82,7 @@ class EDGEMiner(BaseMinerNeuron):
         return synapse
 
     async def blacklist(
-        self, synapse: ATASynapse
+        self, synapse: VPA2ASynapse
     ) -> typing.Tuple[bool, str]:
         # TODO(developer): Define how miners should blacklist requests.
         uid = self.metagraph.hotkeys.index(synapse.dendrite.hotkey)
@@ -104,12 +104,25 @@ class EDGEMiner(BaseMinerNeuron):
                 )
                 return True, "Non-validator hotkey"
 
+        # Get the caller stake
+        caller_uid = self.metagraph.hotkeys.index(
+            synapse.dendrite.hotkey
+        )  # Get the caller index.
+        caller_stake = float(
+            self.metagraph.S[caller_uid]
+        )  # Return the stake as the priority.
+        if caller_stake < 10: #TODO: Change this to a more reasonable value
+            bt.logging.trace(
+                f"Blacklisting hotkey {synapse.dendrite.hotkey}, not enough stake"
+            )
+            return True, "Not enough stake"
+
         bt.logging.trace(
             f"Not Blacklisting recognized hotkey {synapse.dendrite.hotkey}"
         )
         return False, "Hotkey recognized!"
 
-    async def priority(self, synapse: ATASynapse) -> float:
+    async def priority(self, synapse: VPA2ASynapse) -> float:
         # TODO(developer): Define how miners should prioritize requests.
         caller_uid = self.metagraph.hotkeys.index(
             synapse.dendrite.hotkey
@@ -125,7 +138,7 @@ class EDGEMiner(BaseMinerNeuron):
 
 # This is the main function, which runs the miner.
 if __name__ == "__main__":
-    with EDGEMiner() as miner:
+    with VPA2AMiner() as miner:
         while True:
-            bt.logging.info("EDGE Miner running...", time.time())
+            bt.logging.info("VPA2AMiner Miner running...", time.time())
             time.sleep(5)

@@ -16,12 +16,17 @@ Miners will need disk space and compute power to both store the model as well as
 # Getting started
 ## Prerequisites
 
-1. Conda environment ready `conda create -y -n edge python=3.9`
+1. Conda environment ready `conda create -y -n vpa2a python=3.9`
 2. libsndfile package installed `sudo apt-get install libsndfile1`
 
 
 ## Installation and Environment Setup
 
-1. Activate the Conda environment `conda activate edge`
+1. Activate the Conda environment `conda activate vpa2a`
 2. Run the installation script `bash install.sh`
 3. Download the SMPL body files (MALE, FEMALE, NEUTRAL) from https://smpl.is.tue.mpg.de/index.html and place them in directory vpa2a/smpl2bvh/data/smpl/smpl
+
+## Running the miner
+
+1. Activate the Conda environment `conda activate vpa2a`
+2. Run `bash scripts/start_miner.sh`

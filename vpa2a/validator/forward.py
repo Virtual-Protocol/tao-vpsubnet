@@ -17,21 +17,40 @@
 
 import bittensor as bt
 
-from vpa2a.protocol import ATASynapse
-from vpa2a.validator.reward import get_rewards
+from vpa2a.protocol import VPA2ASynapse
+from reward import get_rewards
 from vpa2a.base.utils.uids import get_random_uids
 import os
+import requests
+
+def get_animation(url):
+    response = requests.get(url)
+    if response.status_code == 200:
+        return response.text
+    else:
+        bt.logging.error(f"Failed to retrieve animation data from API: {response.status_code}")
+        return None
+
+def get_challenge():
+    url = os.getenv("VALIDATOR_LIB")
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        animation = get_animation(data["animation"])
+        if not animation:
+            return None, None
+        return data["audio"], animation
+    else:
+        bt.logging.error(f"Failed to retrieve challenge from API: {response.status_code}")
+        return None, None
 
 async def forward(self):
     print("forwarding")
-    #root_dir = os.path.dirname(os.path.abspath(__file__))
-    #with open(f"{root_dir}/song.b64", "r") as file:
-    #    input = file.read()
-
-    # TODO(developer): Define how the validator selects a miner to query, how often, etc.
-    # get_random_uids is an example method, but you can replace it with your own.
+    audio_input, animation_output = get_challenge()
+    if not audio_input:
+        return
     miner_uids = get_random_uids(self, k=self.config.neuron.sample_size)
-    synapse = ATASynapse(audio_input="123")
+    synapse = VPA2ASynapse(audio_input=audio_input)
 
     # The dendrite client queries the network.
     responses = await self.dendrite(
@@ -41,16 +60,14 @@ async def forward(self):
         synapse=synapse,
         # All responses have the deserialize function called on them before returning.
         # You are encouraged to define your own deserialization function.
-        deserialize=False,
+        deserialize=True,
     )
     print("Returned")
     print(responses)
     # Log the results for monitoring purposes.
     bt.logging.info(f"Received responses: {responses}")
 
-    # TODO(developer): Define how the validator scores responses.
-    # Adjust the scores based on responses from miners.
-    rewards = get_rewards(self, query=self.step, responses=responses)
+    rewards = get_rewards(self, query=animation_output, responses=responses)
 
     bt.logging.info(f"Scored responses: {rewards}")
     # Update the scores based on the rewards. You may want to define your own update_scores function for custom behavior.

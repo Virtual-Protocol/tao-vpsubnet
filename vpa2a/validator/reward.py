@@ -35,7 +35,7 @@ def reward(query: int, response: int) -> float:
 
 def get_rewards(
     self,
-    query: int,
+    query: str,
     responses: List[float],
 ) -> torch.FloatTensor:
     """
@@ -50,5 +50,5 @@ def get_rewards(
     """
     # Get all the reward results by iteratively calling your reward() function.
     return torch.FloatTensor(
-        [reward(query, response) for response in responses]
+        [reward(1, response) for response in responses]
     ).to(self.device)
