@@ -24,8 +24,6 @@ import requests
 from vpa2a.base.miner import BaseMinerNeuron
 
 # Inference usage
-from vpa2a.inference import inference
-from vpa2a import postprocess
 from vpa2a.protocol import VPA2ASynapse
 import base64
 import uuid
