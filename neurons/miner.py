@@ -18,6 +18,7 @@
 import time
 import typing
 import bittensor as bt
+import requests
 
 # import base miner class which takes care of most of the boilerplate
 from vpa2a.base.miner import BaseMinerNeuron
@@ -42,13 +43,18 @@ class VPA2AMiner(BaseMinerNeuron):
         # Write the decoded audio to a .wav file
         with open(output_path, "wb") as wav_file:
             wav_file.write(decoded_audio)
- 
+
+    def download_and_save_wav(self, url, file_path):
+        response = requests.get(url)
+        if response.status_code == 200:
+            with open(file_path, 'wb') as f:
+                f.write(response.content)
 
     async def forward(
         self, synapse: VPA2ASynapse
     ) -> VPA2ASynapse:
         """
-        Processes the incoming 'ATASynapse' synapse by inferencing animation data from audio input.
+        Processes the incoming 'VPA2ASynapse' synapse by inferencing animation data from audio input.
 
         Args:
             synapse: The synapse object containing the 'audio_input' data.
@@ -56,29 +62,30 @@ class VPA2AMiner(BaseMinerNeuron):
         Returns:
             The synapse object with the 'animation_output' using bvh file format
         """
+
+        root_dir = os.path.dirname(os.path.abspath(__file__))
+        uid = str(uuid.uuid4())
+        file_path = f"{root_dir}/data/inputs/{uid}.wav"
+        if synapse.is_url():
+            self.download_and_save_wav(synapse.audio_input, file_path)
+        else:
+            self.decode_and_save_wav(synapse.audio_input, file_path)
         
-        # Convert the audio input into wav file
-        # print("Received synapse")
-        # root_dir = os.path.dirname(os.path.abspath(__file__))
-        # uid = str(uuid.uuid4())
-        # file_path = f"{root_dir}/data/inputs/{uid}.wav"
-        # self.decode_and_save_wav(synapse.audio_input, file_path)
-        # print(f"Inferencing {file_path}")
-        # pkl_file = inference(file_path)
-        # bvh_path = f"{root_dir}/data/outputs/{uid}.bvh"
-        # print(f"Post-processing {pkl_file}")
-        # fixed_pkl_file = postprocess.postprocess_pkl(pkl_file)
-        # postprocess.pkl2bvh(fixed_pkl_file, bvh_path)
-        # with open(bvh_path, 'r') as file:
-        #     synapse.animation_output = file.read()
-        # print("output len", len(synapse.animation_output))
-        # # cleanup
-        # os.remove(file_path)
-        # os.remove(pkl_file)
-        # os.remove(fixed_pkl_file)
-        # os.remove(bvh_path)
-        bt.logging.debug("Miner received synapse")
-        synapse.animation_output="thisisresponse"
+        bt.logging.info(f"Inferencing {file_path}")
+        pkl_file = inference(file_path)
+        bvh_path = f"{root_dir}/data/outputs/{uid}.bvh"
+        bt.logging.info(f"Post-processing {pkl_file}")
+        fixed_pkl_file = postprocess.postprocess_pkl(pkl_file)
+        postprocess.pkl2bvh(fixed_pkl_file, bvh_path)
+        with open(bvh_path, 'r') as file:
+            synapse.animation_output = file.read()
+
+        # cleanup
+        os.remove(file_path)
+        os.remove(pkl_file)
+        os.remove(fixed_pkl_file)
+        os.remove(bvh_path)
+
         return synapse
 
     async def blacklist(
