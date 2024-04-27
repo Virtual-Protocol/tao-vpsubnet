@@ -111,7 +111,7 @@ class VPA2AMiner(BaseMinerNeuron):
         caller_stake = float(
             self.metagraph.S[caller_uid]
         )  # Return the stake as the priority.
-        if caller_stake < 10: #TODO: Change this to a more reasonable value
+        if caller_stake < 100: #TODO: Change this to a more reasonable value
             bt.logging.trace(
                 f"Blacklisting hotkey {synapse.dendrite.hotkey}, not enough stake"
             )
