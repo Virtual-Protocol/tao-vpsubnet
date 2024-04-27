@@ -12,6 +12,9 @@
 ---
 
 ## Introduction
+Audio-to-Animation (A2A), also referred to as audio-driven animation, generates visuals that dynamically respond to audio inputs. This technology finds applications across a wide range of domains including gaming AI agents, livestreaming AI idols, virtual companions, metaverses, and more.
+
+This Bittensor subnet offers a platform for democratizing the creation of an A2A model, focusing on generating animated motions based on audio cues. It leverages Bittensor's Yuma consensus 
 
 
 ### Roadmap
