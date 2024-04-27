@@ -63,7 +63,7 @@ class VPA2AMiner(BaseMinerNeuron):
             The synapse object with the 'animation_output' using bvh file format
         """
 
-        root_dir = os.path.dirname(os.path.abspath(__file__))
+        root_dir = os.path.dirname(os.path.abspath(__file__)) + "/../vpa2a"
         uid = str(uuid.uuid4())
         file_path = f"{root_dir}/data/inputs/{uid}.wav"
         if synapse.is_url():
