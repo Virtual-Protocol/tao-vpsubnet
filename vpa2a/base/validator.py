@@ -168,7 +168,6 @@ class BaseValidatorNeuron(BaseNeuron):
         Starts the validator's operations in a background thread upon entering the context.
         This method facilitates the use of the validator in a 'with' statement.
         """
-        bt.logging.debug("here@@@")
         if not self.is_running:
             bt.logging.debug("Starting validator in background thread.")
             self.should_exit = False
