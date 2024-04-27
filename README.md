@@ -1,4 +1,4 @@
-# Virtuals Audio-to-Animation (A2A) Subnet
+# Virtual Protocol's Audio-to-Animation (A2A) Subnet
 
 ---
 - [Introduction](#introduction)
