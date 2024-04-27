@@ -19,7 +19,6 @@ import time
 import typing
 import bittensor as bt
 import requests
-import asyncio
 
 # import base miner class which takes care of most of the boilerplate
 from vpa2a.base.miner import BaseMinerNeuron
@@ -51,6 +50,12 @@ class VPA2AMiner(BaseMinerNeuron):
             with open(file_path, 'wb') as f:
                 f.write(response.content)
 
+    def try_remove_file(self, file_path):
+        try:
+            os.remove(file_path)
+        except Exception as e:
+            pass
+
     async def forward(
         self, synapse: VPA2ASynapse
     ) -> VPA2ASynapse:
@@ -73,19 +78,18 @@ class VPA2AMiner(BaseMinerNeuron):
             self.decode_and_save_wav(synapse.audio_input, file_path)
         
         bt.logging.info(f"Inferencing {file_path}")
-        pkl_file = asyncio.run(inference(file_path))
-        bvh_path = f"{root_dir}/data/outputs/{uid}.bvh"
-        bt.logging.info(f"Post-processing {pkl_file}")
-        fixed_pkl_file = postprocess.postprocess_pkl(pkl_file)
-        postprocess.pkl2bvh(fixed_pkl_file, bvh_path)
-        with open(bvh_path, 'r') as file:
-            synapse.animation_output = file.read()
+        res = requests.post("http://localhost:5000", json={"input": file_path}, timeout=300)
+        animation_output = None
+        if res.status_code == 200:
+            data = res.json()
+            animation_output = data["output"]
 
-        # cleanup
-        os.remove(file_path)
-        os.remove(pkl_file)
-        os.remove(fixed_pkl_file)
-        os.remove(bvh_path)
+        try:
+            os.remove(file_path)
+        except Exception as e:
+            pass
+        
+        synapse.animation_output = animation_output
 
         return synapse
 

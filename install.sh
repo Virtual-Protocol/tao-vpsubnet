@@ -14,7 +14,7 @@ pip install gdown
 gdown https://drive.google.com/uc?id=1BAR712cVEqB8GR37fcEihRV_xOC-fZrZ
 
 echo "Installing Conda packages"
-conda install -y pytorch=1.13.0 torchvision pytorch-cuda=11.6 -c pytorch -c nvidia
+conda install -y pytorch=1.13.1 torchvision pytorch-cuda=11.6 -c pytorch -c nvidia
 conda install -y -c fvcore -c iopath -c conda-forge fvcore iopath
 conda install -y pytorch3d -c pytorch3d
 
