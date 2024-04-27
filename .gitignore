@@ -160,3 +160,6 @@ cython_debug/
 #.idea/
 
 testing/
+vpa2a/data
+vpa2a/EDGE
+vpa2a/smplbvh

@@ -1,7 +1,8 @@
 import argparse
 import asyncio
 import bittensor as bt
-from api.dummy import DummyAPI
+from api.edge import DummyAPI
+import base64
 
 """
 This is a sample of querying local bittensor subnet
@@ -9,8 +10,8 @@ Prerequisites:
 1. Miner and validator are up and running
 
 Expected output:
-It will output whatever --input * 2 , 
-eg: python virtualdemo.py --wallet_name validator --input 5
+It will output the animation file content (bvh format) , 
+eg: python virtualdemo.py --wallet_name validator --input sample.wav
 output: Results: [10]
 """
 
@@ -24,8 +25,17 @@ async def query_synapse(wallet_name, hotkey, network, netuid, input):
         netuid=netuid, network=network, sync=True, lite=False
     )
 
-    results = await api.query_api(metagraph.axons, dummy_input=input)
+    results = await api.query_api(metagraph.axons, input=input)
     print("Results: ", results)
+
+def wav_to_base64(self, file_path):
+    # Read the WAV file in binary mode
+    with open(file_path, "rb") as wav_file:
+        # Read the contents of the WAV file
+        wav_content = wav_file.read()
+        # Encode the contents as base64
+        base64_encoded = base64.b64encode(wav_content)
+    return base64_encoded
 
 
 if __name__ == "__main__":

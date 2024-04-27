@@ -24,8 +24,8 @@ import traceback
 
 import bittensor as bt
 
-from template.base.neuron import BaseNeuron
-from template.utils.config import add_miner_args
+from vpa2a.base.neuron import BaseNeuron
+from vpa2a.base.utils.config import add_miner_args
 
 
 class BaseMinerNeuron(BaseNeuron):
@@ -190,3 +190,41 @@ class BaseMinerNeuron(BaseNeuron):
 
         # Sync the metagraph.
         self.metagraph.sync(subtensor=self.subtensor)
+
+    def save_state(self):
+        pass
+
+    def load_state(self):
+        pass
+
+    def set_weights(self):
+        """
+        Self-assigns a weight of 1 to the current miner (identified by its UID) and
+        a weight of 0 to all other peers in the network. The weights determine the trust level the miner assigns to other nodes on the network.
+
+        Raises:
+            Exception: If there's an error while setting weights, the exception is logged for diagnosis.
+        """
+        try:
+            # --- query the chain for the most current number of peers on the network
+            chain_weights = torch.zeros(
+                self.subtensor.subnetwork_n(netuid=self.metagraph.netuid)
+            )
+            chain_weights[self.uid] = 1
+
+            # --- Set weights.
+            self.subtensor.set_weights(
+                wallet=self.wallet,
+                netuid=self.metagraph.netuid,
+                uids=torch.arange(0, len(chain_weights)),
+                weights=chain_weights.to("cpu"),
+                wait_for_inclusion=False,
+                version_key=self.spec_version,
+            )
+
+        except Exception as e:
+            bt.logging.error(
+                f"Failed to set weights on chain with exception: { e }"
+            )
+
+        bt.logging.info(f"Set weights: {chain_weights}")

@@ -1,7 +1,5 @@
 # The MIT License (MIT)
-# Copyright © 2023 Yuma Rao
-# TODO(developer): Set your name
-# Copyright © 2023 <your name>
+# Copyright © 2024 VirtualProtocol
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
 # documentation files (the “Software”), to deal in the Software without restriction, including without limitation
@@ -17,19 +15,31 @@
 # OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 # DEALINGS IN THE SOFTWARE.
 
-# TODO(developer): Change this value when updating your code base.
-# Define the version of the template module.
-__version__ = "0.0.0"
-version_split = __version__.split(".")
-__spec_version__ = (
-    (1000 * int(version_split[0]))
-    + (10 * int(version_split[1]))
-    + (1 * int(version_split[2]))
-)
+import bittensor as bt
+import typing
 
-# Import all submodules.
-from . import protocol
-from . import base
-from . import validator
-from . import api
-from .subnet_links import SUBNET_LINKS
+class VPA2ASynapse(bt.Synapse):
+    """
+    This protocol helps in handling request and response communication between
+    the miner and the validator.
+
+    Attributes:
+    - audio_input: Base64 encoded audio input
+    - animation_output: The animation output
+    - input_type: Type indicator: 'data' for base64 encoded audio, 'url' for audio URL
+    """
+
+    input_type: str = 'url'
+
+    # Required request input, filled by sending dendrite caller.
+    audio_input: str = ""
+
+    # Optional request output, filled by receiving axon.
+    animation_output: typing.Optional[str] = ""
+
+    def deserialize(self) -> str:
+        return self.animation_output
+    
+    def is_url(self) -> bool:
+        """ Check if the input is a URL. """
+        return self.input_type == 'url'

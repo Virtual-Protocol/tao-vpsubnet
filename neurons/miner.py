@@ -1,73 +1,96 @@
-# This is a sample miner that simply returns input * 2
+# The MIT License (MIT)
+# Copyright © 2024 VirtualProtocol
+
+# Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+# documentation files (the “Software”), to deal in the Software without restriction, including without limitation
+# the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+# and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+# The above copyright notice and this permission notice shall be included in all copies or substantial portions of
+# the Software.
+
+# THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO
+# THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+# THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+# OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+# DEALINGS IN THE SOFTWARE.
 
 import time
 import typing
 import bittensor as bt
-
-# Bittensor Miner Template:
-import template
+import requests
 
 # import base miner class which takes care of most of the boilerplate
-from template.base.miner import BaseMinerNeuron
+from vpa2a.base.miner import BaseMinerNeuron
 
+# Inference usage
+from vpa2a.protocol import VPA2ASynapse
+import base64
+import uuid
+import os
 
-class Miner(BaseMinerNeuron):
+class VPA2AMiner(BaseMinerNeuron):
 
     def __init__(self, config=None):
-        super(Miner, self).__init__(config=config)
+        super(VPA2AMiner, self).__init__(config=config)
+
+    def decode_and_save_wav(self, audio_input, output_path):
+        # Decode base64 audio input
+        decoded_audio = base64.b64decode(audio_input)
+        
+        # Write the decoded audio to a .wav file
+        with open(output_path, "wb") as wav_file:
+            wav_file.write(decoded_audio)
+
+    def download_and_save_wav(self, url, file_path):
+        response = requests.get(url)
+        if response.status_code == 200:
+            with open(file_path, 'wb') as f:
+                f.write(response.content)
+
+    def try_remove_file(self, file_path):
+        try:
+            os.remove(file_path)
+        except Exception as e:
+            pass
 
     async def forward(
-        self, synapse: template.protocol.Dummy
-    ) -> template.protocol.Dummy:
+        self, synapse: VPA2ASynapse
+    ) -> VPA2ASynapse:
         """
-        Processes the incoming 'Dummy' synapse by performing a predefined operation on the input data.
-        This method should be replaced with actual logic relevant to the miner's purpose.
+        Processes the incoming 'VPA2ASynapse' synapse by inferencing animation data from audio input.
 
         Args:
-            synapse (template.protocol.Dummy): The synapse object containing the 'dummy_input' data.
+            synapse: The synapse object containing the 'audio_input' data.
 
         Returns:
-            template.protocol.Dummy: The synapse object with the 'dummy_output' field set to twice the 'dummy_input' value.
-
-        The 'forward' function is a placeholder and should be overridden with logic that is appropriate for
-        the miner's intended operation. This method demonstrates a basic transformation of input data.
+            The synapse object with the 'animation_output' using bvh file format
         """
-        # TODO(developer): Replace with actual implementation logic.
-        synapse.dummy_output = synapse.dummy_input * 2
+
+        root_dir = os.path.dirname(os.path.abspath(__file__)) + "/../vpa2a"
+        uid = str(uuid.uuid4())
+        file_path = f"{root_dir}/data/inputs/{uid}.wav"
+        if synapse.is_url():
+            self.download_and_save_wav(synapse.audio_input, file_path)
+        else:
+            self.decode_and_save_wav(synapse.audio_input, file_path)
+        
+        bt.logging.info(f"Inferencing {file_path}")
+        res = requests.post("http://localhost:5000", json={"input": file_path}, timeout=300)
+        animation_output = None
+        if res.status_code == 200:
+            data = res.json()
+            animation_output = data["output"]
+
+        self.try_remove_file(file_path)
+        
+        synapse.animation_output = animation_output
+
         return synapse
 
     async def blacklist(
-        self, synapse: template.protocol.Dummy
+        self, synapse: VPA2ASynapse
     ) -> typing.Tuple[bool, str]:
-        """
-        Determines whether an incoming request should be blacklisted and thus ignored. Your implementation should
-        define the logic for blacklisting requests based on your needs and desired security parameters.
-
-        Blacklist runs before the synapse data has been deserialized (i.e. before synapse.data is available).
-        The synapse is instead contructed via the headers of the request. It is important to blacklist
-        requests before they are deserialized to avoid wasting resources on requests that will be ignored.
-
-        Args:
-            synapse (template.protocol.Dummy): A synapse object constructed from the headers of the incoming request.
-
-        Returns:
-            Tuple[bool, str]: A tuple containing a boolean indicating whether the synapse's hotkey is blacklisted,
-                            and a string providing the reason for the decision.
-
-        This function is a security measure to prevent resource wastage on undesired requests. It should be enhanced
-        to include checks against the metagraph for entity registration, validator status, and sufficient stake
-        before deserialization of synapse data to minimize processing overhead.
-
-        Example blacklist logic:
-        - Reject if the hotkey is not a registered entity within the metagraph.
-        - Consider blacklisting entities that are not validators or have insufficient stake.
-
-        In practice it would be wise to blacklist requests from entities that are not validators, or do not have
-        enough stake. This can be checked via metagraph.S and metagraph.validator_permit. You can always attain
-        the uid of the sender via a metagraph.hotkeys.index( synapse.dendrite.hotkey ) call.
-
-        Otherwise, allow the request to be processed further.
-        """
         # TODO(developer): Define how miners should blacklist requests.
         uid = self.metagraph.hotkeys.index(synapse.dendrite.hotkey)
         if (
@@ -88,31 +111,25 @@ class Miner(BaseMinerNeuron):
                 )
                 return True, "Non-validator hotkey"
 
+        # Get the caller stake
+        caller_uid = self.metagraph.hotkeys.index(
+            synapse.dendrite.hotkey
+        )  # Get the caller index.
+        caller_stake = float(
+            self.metagraph.S[caller_uid]
+        )  # Return the stake as the priority.
+        if caller_stake < 100: #TODO: Change this to a more reasonable value
+            bt.logging.trace(
+                f"Blacklisting hotkey {synapse.dendrite.hotkey}, not enough stake"
+            )
+            return True, "Not enough stake"
+
         bt.logging.trace(
             f"Not Blacklisting recognized hotkey {synapse.dendrite.hotkey}"
         )
         return False, "Hotkey recognized!"
 
-    async def priority(self, synapse: template.protocol.Dummy) -> float:
-        """
-        The priority function determines the order in which requests are handled. More valuable or higher-priority
-        requests are processed before others. You should design your own priority mechanism with care.
-
-        This implementation assigns priority to incoming requests based on the calling entity's stake in the metagraph.
-
-        Args:
-            synapse (template.protocol.Dummy): The synapse object that contains metadata about the incoming request.
-
-        Returns:
-            float: A priority score derived from the stake of the calling entity.
-
-        Miners may recieve messages from multiple entities at once. This function determines which request should be
-        processed first. Higher values indicate that the request should be processed first. Lower values indicate
-        that the request should be processed later.
-
-        Example priority logic:
-        - A higher stake results in a higher priority value.
-        """
+    async def priority(self, synapse: VPA2ASynapse) -> float:
         # TODO(developer): Define how miners should prioritize requests.
         caller_uid = self.metagraph.hotkeys.index(
             synapse.dendrite.hotkey
@@ -124,19 +141,11 @@ class Miner(BaseMinerNeuron):
             f"Prioritizing {synapse.dendrite.hotkey} with value: ", prirority
         )
         return prirority
-    
-    def save_state(self):
-        # TODO: Check what does this do
-        pass
-
-    def load_state(self):
-        # TODO: Check what does this do
-        pass
 
 
 # This is the main function, which runs the miner.
 if __name__ == "__main__":
-    with Miner() as miner:
+    with VPA2AMiner() as miner:
         while True:
-            bt.logging.info("Miner running...", time.time())
+            bt.logging.info("VPA2AMiner Miner running...", time.time())
             time.sleep(5)

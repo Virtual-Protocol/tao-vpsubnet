@@ -19,18 +19,21 @@
 
 import bittensor as bt
 from typing import List, Optional, Union, Any, Dict
-from template.protocol import Dummy
+from vpa2a.protocol import ATASynapse
 from bittensor.subnets import SubnetsAPI
+import base64
 
-
-class DummyAPI(SubnetsAPI):
+class EDGEAPI(SubnetsAPI):
     def __init__(self, wallet: "bt.wallet"):
         super().__init__(wallet)
         self.netuid = 1
-        self.name = "dummy"
+        self.name = "ata"
 
-    def prepare_synapse(self, dummy_input: int) -> Dummy:
-        synapse = Dummy(dummy_input=dummy_input)
+
+    def prepare_synapse(self, input: str) -> ATASynapse:
+        synapse = ATASynapse()
+        synapse.audio_input = input
+        
         return synapse
 
     def process_responses(
@@ -40,23 +43,8 @@ class DummyAPI(SubnetsAPI):
         for response in responses:
             if response.dendrite.status_code != 200:
                 continue
-            outputs.append(response.dummy_output)
+            outputs.append(response.animation_output)
         return outputs
     
     def deserialize(self) -> int:
-        """
-        Deserialize the dummy output. This method retrieves the response from
-        the miner in the form of dummy_output, deserializes it and returns it
-        as the output of the dendrite.query() call.
-
-        Returns:
-        - int: The deserialized response, which in this case is the value of dummy_output.
-
-        Example:
-        Assuming a Dummy instance has a dummy_output value of 5:
-        >>> dummy_instance = Dummy(dummy_input=4)
-        >>> dummy_instance.dummy_output = 5
-        >>> dummy_instance.deserialize()
-        5
-        """
-        return self.dummy_output
+        return self.animation_output
