@@ -84,10 +84,7 @@ class VPA2AMiner(BaseMinerNeuron):
             data = res.json()
             animation_output = data["output"]
 
-        try:
-            os.remove(file_path)
-        except Exception as e:
-            pass
+        self.try_remove_file(file_path)
         
         synapse.animation_output = animation_output
 
