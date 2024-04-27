@@ -30,6 +30,7 @@ from EDGE.data.slice import slice_audio
 from EDGE.EDGE import EDGE
 from EDGE.data.audio_extraction.baseline_features import extract as baseline_extract
 from EDGE.data.audio_extraction.jukebox_features import extract as juke_extract
+import bittensor as bt
 
 # sort filenames that look like songname_slice{number}.ext
 
@@ -54,7 +55,7 @@ def stringintcmp_(a, b):
 stringintkey = cmp_to_key(stringintcmp_)
 
 
-def inference(wav_file):
+async def inference(wav_file):
     opt = type('DynamicObject', (object,), {
         "feature_type": "jukebox",
         "out_length": 30,
@@ -84,7 +85,7 @@ def inference(wav_file):
     all_cond = []
     all_filenames = []
 
-    print("Computing features for input music")
+    bt.logging.info("Computing features for input music")
     # create temp folder (or use the cache folder if specified)
     if opt.cache_features:
         songname = os.path.splitext(os.path.basename(wav_file))[0]
@@ -96,7 +97,7 @@ def inference(wav_file):
         temp_dir_list.append(temp_dir)
         dirname = temp_dir.name
     # slice the audio file
-    print(f"Slicing {wav_file}")
+    bt.logging.info(f"Slicing {wav_file}")
     slice_audio(wav_file, 2.5, 5.0, dirname)
     file_list = sorted(glob.glob(f"{dirname}/*.wav"), key=stringintkey)
     if opt.out_length > 0:
@@ -107,7 +108,7 @@ def inference(wav_file):
         sample_size = len(file_list)
     cond_list = []
     # generate juke representations
-    print(f"Computing features for {wav_file}")
+    bt.logging.info(f"Computing features for {wav_file}")
     for idx, file in enumerate(tqdm(file_list)):
         # if not caching then only calculate for the interested range
         if (not opt.cache_features) and (not (rand_idx <= idx < rand_idx + sample_size)):
@@ -137,7 +138,7 @@ def inference(wav_file):
     if opt.save_motions:
         fk_out = opt.motion_save_dir
 
-    print("Generating dances")
+    bt.logging.info("Generating dances")
     for i in range(len(all_cond)):
         data_tuple = None, all_cond[i], all_filenames[i]
         model.render_sample(

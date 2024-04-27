@@ -19,6 +19,7 @@ import time
 import typing
 import bittensor as bt
 import requests
+import asyncio
 
 # import base miner class which takes care of most of the boilerplate
 from vpa2a.base.miner import BaseMinerNeuron
@@ -72,7 +73,7 @@ class VPA2AMiner(BaseMinerNeuron):
             self.decode_and_save_wav(synapse.audio_input, file_path)
         
         bt.logging.info(f"Inferencing {file_path}")
-        pkl_file = inference(file_path)
+        pkl_file = asyncio.run(inference(file_path))
         bvh_path = f"{root_dir}/data/outputs/{uid}.bvh"
         bt.logging.info(f"Post-processing {pkl_file}")
         fixed_pkl_file = postprocess.postprocess_pkl(pkl_file)
