@@ -18,4 +18,5 @@ Currently, Validators do not need much will need disk space and compute power. H
 
 ## Running the validator
 
-Run `bash scripts/start_validator.sh`
+1. Set the **VALIDATOR_LIB** environment variable to validator audio library url
+2. Run `bash scripts/start_validator.sh`
