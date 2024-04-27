@@ -55,7 +55,7 @@ def stringintcmp_(a, b):
 stringintkey = cmp_to_key(stringintcmp_)
 
 
-async def inference(wav_file):
+def inference(wav_file):
     opt = type('DynamicObject', (object,), {
         "feature_type": "jukebox",
         "out_length": 30,
