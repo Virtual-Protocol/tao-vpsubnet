@@ -85,11 +85,11 @@ async def forward(self):
         
         rewards = get_rewards(
             self, query=animation_output, responses=response_paths)
+        bt.logging.info(f"Scored responses: {rewards}")
+        # Update the scores based on the rewards. You may want to define your own update_scores function for custom behavior.
+        self.update_scores(rewards, miner_uids)
     except Exception as e:
-        rewards = torch.zeros(len(miner_uids))
+        bt.logging.error(f"Failed to forward query with exception: {e}")
     finally:
         tempdir.cleanup()
-
-    bt.logging.info(f"Scored responses: {rewards}")
-    # Update the scores based on the rewards. You may want to define your own update_scores function for custom behavior.
-    self.update_scores(rewards, miner_uids)
+    
