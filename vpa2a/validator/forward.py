@@ -75,10 +75,10 @@ async def forward(self):
         response_paths = []
         for idx, response in enumerate(responses):
             rpath = ""
-            if len(response.data) > 0:
+            if len(response) > 0:
                 rpath = f"{temp_dir.name}/r{idx}.bvh"
                 with open(os.path.join(temp_dir.name, rpath), "w") as f:
-                    f.write(response.data)
+                    f.write(response)
             response_paths.append(rpath)
 
         bt.logging.info(f"Rewarding with query {animation_output} and responses {response_paths}")
