@@ -51,9 +51,9 @@ def get_challenge(tempdir):
 
 async def forward(self):
     miner_uids = get_random_uids(self, k=self.config.neuron.sample_size)
-    tempdir = TemporaryDirectory()
+    temp_dir = TemporaryDirectory()
     try:
-        audio_input, animation_output = get_challenge(tempdir)
+        audio_input, animation_output = get_challenge(temp_dir.name)
         
         if audio_input is None:
             raise Exception("Failed to retrieve challenge data")
@@ -77,7 +77,7 @@ async def forward(self):
             rpath = ""
             if len(response.data) > 0:
                 rpath = f"r{idx}.bvh"
-                with open(os.path.join(tempdir.name, rpath), "w") as f:
+                with open(os.path.join(temp_dir.name, rpath), "w") as f:
                     f.write(response.data)
             response_paths.append(rpath)
 
