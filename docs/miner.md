@@ -11,7 +11,7 @@ The example build this repo was validated on:
  - NVIDIA RTX 3090
 
 # System Requirements
-Miners will need disk space and compute power to both store the model as well as for inference and (optionally) train their model. It is recommended to have at least 50 GB of disk space and GPU with atleast 24 GB of VRAM for inference.
+Miners will need disk space and compute power to both store the model as well as for inference and (optionally) train their model. It is recommended to have at least 50 GB of disk space and GPU with 16 GB of VRAM for inference.
 
 # Getting started
 ## Prerequisites
