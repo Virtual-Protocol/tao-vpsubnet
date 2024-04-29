@@ -19,26 +19,45 @@
 
 import torch
 from typing import List
+from rmse import compute_rmse
 
 
-def reward(query: str, response: str) -> float:
+def reward(query, response) -> float:
     """
     Reward the miner response to the dummy request. This method returns a reward
     value for the miner, which is used to update the miner's score.
 
     Returns:
     - float: The reward value for the miner.
+
+    Inputs are both in .bvh file formats. 
+
+    RMSE range of 0 - 4000. If MSE is 0 then returns 1 (most correct), if MSE is 4000 or above then returns 0.01
     """
-    # TODO
+
     if response is None or len(response) == 0:
         return 0.0
-    return 1.0 #if response == query * 2 else 0
+
+    rmse = compute_rmse (query, response) 
+
+    min_score = 0.1
+    max_score = 1.0
+    max_allowable_rmse = 4000.0
+
+    if rmse > max_allowable_rmse : 
+        final_score = min_score
+    else : 
+        # map a linear relationship between the max and min values of allowable RMSE to scores. 
+        k = (max_score - min_score) / max_allowable_rmse
+        final_score = 1 - (rmse * k) 
+
+    return final_score 
 
 
 def get_rewards(
     self,
-    query: str,
-    responses: List[str],
+    query,
+    responses,
 ) -> torch.FloatTensor:
     """
     Returns a tensor of rewards for the given query and responses.
@@ -52,5 +71,5 @@ def get_rewards(
     """
     # Get all the reward results by iteratively calling your reward() function.
     return torch.FloatTensor(
-        [reward(1, response) for response in responses]
+        [reward(query, response) for response in responses]
     ).to(self.device)
