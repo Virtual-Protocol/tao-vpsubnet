@@ -22,7 +22,7 @@ from typing import List
 from rmse import compute_rmse
 
 
-def reward(query, response) -> float:
+def reward(query: str, response: str) -> float:
     """
     Reward the miner response to the dummy request. This method returns a reward
     value for the miner, which is used to update the miner's score.
@@ -38,20 +38,20 @@ def reward(query, response) -> float:
     if response is None or len(response) == 0:
         return 0.0
 
-    rmse = compute_rmse (query, response) 
+    rmse = compute_rmse(query, response)
 
     min_score = 0.1
     max_score = 1.0
     max_allowable_rmse = 4000.0
 
-    if rmse > max_allowable_rmse : 
+    if rmse > max_allowable_rmse:
         final_score = min_score
-    else : 
-        # map a linear relationship between the max and min values of allowable RMSE to scores. 
+    else:
+        # map a linear relationship between the max and min values of allowable RMSE to scores.
         k = (max_score - min_score) / max_allowable_rmse
-        final_score = 1 - (rmse * k) 
+        final_score = 1 - (rmse * k)
 
-    return final_score 
+    return final_score
 
 
 def get_rewards(
