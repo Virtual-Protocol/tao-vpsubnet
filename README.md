@@ -1,11 +1,15 @@
-# Virtual Protocol's Audio-to-Animation (A2A) Subnet
+# Virtual Protocol's Audio-to-Animation (A2A) Bittensor Subnet
+
+*News: The A2A Bittensor Subnet is now on the subnet with uid X! Please join the [Bittensor Discord](https://discord.gg/RXST8svz) and see us at Channel X! Please also check our [X]() for our vision of creating an avenue where everyone can contribute to creating the best open-source A2A models.  30th April 2024*
+
+> **Note:** For more details around Virtual Protocol's Audio-to-Animation (A2A) Bittensor Subnet, please feel free to check out our [whitepaper] ().
 
 ---
 - [Introduction](#introduction)
   - [Roadmap](#roadmap)
   - [Status](#status)
 - [Mechanism](#mechanism)
-  - [Evaluation Protocol](#validator)  
+  - [Evaluation Protocol](#evaluation)  
 - [Getting Started](#started)
   - [Validator](#validator)
   - [Miner](#miner)
@@ -17,8 +21,6 @@
 Audio-to-Animation (A2A), also referred to as audio-driven animation, generates visuals that dynamically respond to audio inputs. This technology finds applications across a wide range of domains including gaming AI agents, livestreaming AI idols, virtual companions, metaverses, and more.
 
 This Bittensor subnet offers a platform for democratizing the creation of A2A models, gathering the help of the wider ML community in Bittensor to generate the best animated motions and bring life to on-chain AI agents.
-
-For more background info on why we need A2A models, feel free to check out our [whitepaper]().
 
 ### Roadmap
 We will divide the development of A2A models into several phases, with an iterative approach to make it better over time.
