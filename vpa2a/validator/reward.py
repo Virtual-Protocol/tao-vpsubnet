@@ -19,7 +19,7 @@
 
 import torch
 from typing import List
-from rmse import compute_rmse
+from .rmse import compute_rmse
 
 
 def reward(query: str, response: str) -> float:
