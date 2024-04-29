@@ -22,7 +22,7 @@ from .reward import get_rewards
 from vpa2a.base.utils.uids import get_random_uids
 import os
 import requests
-
+from tempfile import TemporaryDirectory
 
 def get_animation(url):
     response = requests.get(url)
@@ -33,15 +33,17 @@ def get_animation(url):
         return None
 
 
-def get_challenge():
+def get_challenge(tempdir):
     url = os.getenv("VALIDATOR_LIB")
     response = requests.get(url)
     if response.status_code == 200:
         data = response.json()
         animation = get_animation(data["animation"])
-        if not animation:
-            return None, None
-        return data["audio"], animation
+        animation_path = os.path.join(tempdir, "animation.bvh")
+        if animation:
+            with open(animation_path, "w") as f:
+                f.write(animation)
+        return data["audio"], animation_path
     else:
         bt.logging.error(f"Failed to retrieve challenge from API: {response.status_code}")
         return None, None
@@ -49,9 +51,13 @@ def get_challenge():
 
 async def forward(self):
     miner_uids = get_random_uids(self, k=self.config.neuron.sample_size)
-
-    audio_input, animation_output = get_challenge()
-    if audio_input is not None:
+    tempdir = TemporaryDirectory()
+    try:
+        audio_input, animation_output = get_challenge(tempdir)
+        
+        if audio_input is None:
+            raise Exception("Failed to retrieve challenge data")
+        
         synapse = VPA2ASynapse(audio_input=audio_input)
 
         # The dendrite client queries the network.
@@ -65,13 +71,24 @@ async def forward(self):
             deserialize=True,
         )
 
-        # Log the results for monitoring purposes.
-        bt.logging.info(f"Received responses: {responses}")
+        # Write responses to disk
+        response_paths = []
+        for idx, response in enumerate(responses):
+            rpath = ""
+            if len(response.data) > 0:
+                rpath = f"r{idx}.bvh"
+                with open(os.path.join(tempdir.name, rpath), "w") as f:
+                    f.write(response.data)
+            response_paths.append(rpath)
 
+        bt.logging.info(f"Rewarding with query {animation_output} and responses {response_paths}")
+        
         rewards = get_rewards(
-            self, query=animation_output, responses=responses)
-    else:
+            self, query=animation_output, responses=response_paths)
+    except Exception as e:
         rewards = torch.zeros(len(miner_uids))
+    finally:
+        tempdir.cleanup()
 
     bt.logging.info(f"Scored responses: {rewards}")
     # Update the scores based on the rewards. You may want to define your own update_scores function for custom behavior.
