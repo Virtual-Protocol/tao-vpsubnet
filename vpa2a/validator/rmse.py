@@ -138,8 +138,3 @@ def compute_rmse(edge_bvh_fp, lib_bvh_fp, joint_map=edge_library_joint_map):
         results[joint_name[0]] = rms_total/min_frame_count
     return sum(results.values())
 
-
-# Calling the function and storing the result
-results = compute_rmse("edge-transformed.bvh", "deepmotion-001.bvh", edge_library_joint_map)
-
-print(f"Total Root Mean Square Error is: {results}")
