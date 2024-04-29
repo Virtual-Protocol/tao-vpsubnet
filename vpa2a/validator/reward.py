@@ -38,7 +38,7 @@ def reward(query: str, response: str) -> float:
     if response is None or len(response) == 0:
         return 0.0
 
-    rmse = compute_rmse(query, response)
+    rmse = compute_rmse(response, query)
 
     min_score = 0.1
     max_score = 1.0

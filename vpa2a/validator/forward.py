@@ -76,7 +76,7 @@ async def forward(self):
         for idx, response in enumerate(responses):
             rpath = ""
             if len(response.data) > 0:
-                rpath = f"r{idx}.bvh"
+                rpath = f"{temp_dir.name}/r{idx}.bvh"
                 with open(os.path.join(temp_dir.name, rpath), "w") as f:
                     f.write(response.data)
             response_paths.append(rpath)
@@ -91,5 +91,5 @@ async def forward(self):
     except Exception as e:
         bt.logging.error(f"Failed to forward query with exception: {e}")
     finally:
-        tempdir.cleanup()
+        temp_dir.cleanup()
     

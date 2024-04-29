@@ -107,6 +107,8 @@ def compute_rmse(edge_bvh_fp, lib_bvh_fp, joint_map=edge_library_joint_map):
     min_frame_count = min(bvhio.readAsBvh(edge_bvh_fp).FrameCount, bvhio.readAsBvh(lib_bvh_fp).FrameCount)
 
     results = {}
+    deep_pos = 0
+    edge_pos = 0
     for joint_name in joint_map:
         rms_total = 0
         for i in range(min_frame_count):  # Iterating from 0 to the min frame between to BVH
