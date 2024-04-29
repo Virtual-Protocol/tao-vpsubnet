@@ -14,14 +14,6 @@ To evaluate motion data effectively, one common methodology employed is the comp
 *Speed*
 XX
 
-## Improvements to Evaluation Protocol in the Future
-In future phase, more sophisticated and detailed metrics for motion evaluation can be added to for 'realism' and the syncing of motion and beats. One example could be the Physical Foot Contact (PFC) score. 
-
-*Physical Foot Contact (PFC) Score*
-
-To calculate the physical foot contact score from BVH motion data, Validator will perform a series of calculation. Validator will first read the BVH motion data submitted by Miner and extract the foot joint for each frame. Next, Validator will preprocess the motion data by smoothing joint positions with a low-pass filter to reduce noise and calculating the velocity for each joint by the difference between consecutive frames, adjusted for frame duration. Validator can also detect foot contact events by analyzing the vertical velocity and position of each foot joint -  a contact event is recognized when the vertical velocity shifts from negative to positive and the foot joint's vertical position is below a predetermined threshold. Validator then proceeds to record these contact events per frame for each foot, and calculate the contact duration by counting the frames from the start of contact until the foot leaves the ground. Furthermore, Validator assesses foot sliding by evaluating the horizontal displacement during contact - if this exceeds a set threshold, it indicates sliding. Similarly, Validator can also evaluate foot stability by analyzing the horizontal velocity - if the velocity exceeds a certain threshold, it suggests instability. Finally, Validator can compute the physical foot contact score by assigning weights to these metrics - the longer the contact durations, the higher the sliding percentages, and hence the greater instability percentages are factored in to determine the overall score. This score reflects the effectiveness and stability of foot contacts as captured in the motion data.
-
-
 ## System Requirements
 Currently, Validators do not need much disk space and compute power. GPUs are not required. However, in future evaluation protocols and validation phases, it is recommended to have at least 50 GB of disk space and GPU with atleast 24 GB of VRAM for inference.
 
