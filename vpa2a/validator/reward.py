@@ -21,8 +21,14 @@ import torch
 from typing import List
 from .rmse import compute_rmse
 
+def sigmoid(x, temperature, shift):
+    """
+    Apply a sigmoid function to normalize scores.
+    """
+    return 1 / (1 + torch.exp(-temperature * (x - shift)))
 
-def reward(query: str, response: str) -> float:
+
+def reward(query, response, response_time, max_response_time) -> float:
     """
     Reward the miner response to the dummy request. This method returns a reward
     value for the miner, which is used to update the miner's score.
@@ -43,15 +49,24 @@ def reward(query: str, response: str) -> float:
     min_score = 0.1
     max_score = 1.0
     max_allowable_rmse = 4000.0
+    correctness_weight = 0.7
+    speed_weight = 0.3
 
     if rmse > max_allowable_rmse:
-        final_score = min_score
+        correctness_score = min_score
     else:
         # map a linear relationship between the max and min values of allowable RMSE to scores.
         k = (max_score - min_score) / max_allowable_rmse
-        final_score = 1 - (rmse * k)
+        correctness_score = 1 - (rmse * k)
 
-    return final_score
+    normalized_speed_score = 1 - response_time / max_response_time
+    
+    # Apply sigmoid to speed score for normalization between 0 and 1
+    speed_score = sigmoid(torch.tensor([normalized_speed_score]), temperature=1.0, shift=0.5).item()
+    
+    combined_score = (correctness_weight * correctness_score) + (speed_weight * speed_score)
+
+    return combined_score
 
 
 def get_rewards(
@@ -64,12 +79,20 @@ def get_rewards(
 
     Args:
     - query (int): The query sent to the miner.
-    - responses (List[str]): A list of responses from the miner.
+    - responses (List[str, float]): A list of responses from the miner.
 
     Returns:
     - torch.FloatTensor: A tensor of rewards for the given query and responses.
     """
+    # dealing with empty response_times. 
+    default_high_process_time = 120 
+    max_response_time = 180
+
+    for response in responses :
+        if response[1] is None :
+            response[1] = default_high_process_time
+
     # Get all the reward results by iteratively calling your reward() function.
     return torch.FloatTensor(
-        [reward(query, response) for response in responses]
+        [reward(query, response[0], response[1], max_response_time) for response in responses]
     ).to(self.device)

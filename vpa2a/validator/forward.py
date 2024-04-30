@@ -75,7 +75,7 @@ async def forward(self):
                 rpath = f"{temp_dir.name}/r{idx}.bvh"
                 with open(os.path.join(temp_dir.name, rpath), "w") as f:
                     f.write(response)
-            response_paths.append(rpath)
+            response_paths.append([rpath, response.dendrite.process_time])
 
         bt.logging.info(f"Rewarding with query {animation_output} and responses {response_paths}")
         
@@ -88,4 +88,6 @@ async def forward(self):
         bt.logging.error(f"Failed to forward query with exception: {e}")
     finally:
         temp_dir.cleanup()
-    
+
+
+
