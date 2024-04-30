@@ -19,7 +19,7 @@
 
 import torch
 from typing import List
-from rmse import compute_rmse
+from .rmse import compute_rmse
 
 def sigmoid(x, temperature, shift):
     """
@@ -44,7 +44,7 @@ def reward(query, response, response_time, max_response_time) -> float:
     if response is None or len(response) == 0:
         return 0.0
 
-    rmse = compute_rmse(query, response)
+    rmse = compute_rmse(response, query)
 
     min_score = 0.1
     max_score = 1.0
@@ -79,7 +79,7 @@ def get_rewards(
 
     Args:
     - query (int): The query sent to the miner.
-    - responses (List[str]): A list of responses from the miner.
+    - responses (List[str, float]): A list of responses from the miner.
 
     Returns:
     - torch.FloatTensor: A tensor of rewards for the given query and responses.
