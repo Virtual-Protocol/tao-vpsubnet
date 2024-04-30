@@ -65,16 +65,16 @@ async def forward(self):
             axons=[self.metagraph.axons[uid] for uid in miner_uids],
             synapse=synapse,
             timeout=300,
-            deserialize=True,
+            deserialize=False,
         )
         # Write responses to disk
         response_paths = []
         for idx, response in enumerate(responses):
             rpath = ""
-            if len(response) > 0:
+            if len(response.animation_output) > 0:
                 rpath = f"{temp_dir.name}/r{idx}.bvh"
                 with open(os.path.join(temp_dir.name, rpath), "w") as f:
-                    f.write(response)
+                    f.write(response.animation_output)
             response_paths.append([rpath, response.dendrite.process_time])
 
         bt.logging.info(f"Rewarding with query {animation_output} and responses {response_paths}")
