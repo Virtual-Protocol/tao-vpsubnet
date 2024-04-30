@@ -64,7 +64,7 @@ async def forward(self):
         responses = await self.dendrite(
             axons=[self.metagraph.axons[uid] for uid in miner_uids],
             synapse=synapse,
-            timeout=300,
+            timeout=180,
             deserialize=False,
         )
         # Write responses to disk
