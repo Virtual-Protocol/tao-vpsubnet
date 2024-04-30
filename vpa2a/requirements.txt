@@ -16,4 +16,4 @@ smplx[all]
 bittensor
 torch
 loguru
-bvhio
+flask
