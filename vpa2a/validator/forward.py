@@ -51,9 +51,9 @@ def get_challenge(tempdir):
 
 async def forward(self):
     miner_uids = get_random_uids(self, k=self.config.neuron.sample_size)
-    temp_dir = TemporaryDirectory()
+    tempdir = TemporaryDirectory()
     try:
-        audio_input, animation_output = get_challenge(temp_dir.name)
+        audio_input, animation_output = get_challenge(tempdir)
         
         if audio_input is None:
             raise Exception("Failed to retrieve challenge data")
@@ -75,21 +75,21 @@ async def forward(self):
         response_paths = []
         for idx, response in enumerate(responses):
             rpath = ""
-            if len(response) > 0:
-                rpath = f"{temp_dir.name}/r{idx}.bvh"
-                with open(os.path.join(temp_dir.name, rpath), "w") as f:
-                    f.write(response)
-            response_paths.append(rpath)
+            if len(response.data) > 0:
+                rpath = f"r{idx}.bvh"
+                with open(os.path.join(tempdir.name, rpath), "w") as f:
+                    f.write(response.data)
+            response_paths.append([rpath, response.dendrite.process_time])
 
         bt.logging.info(f"Rewarding with query {animation_output} and responses {response_paths}")
         
         rewards = get_rewards(
             self, query=animation_output, responses=response_paths)
-        bt.logging.info(f"Scored responses: {rewards}")
-        # Update the scores based on the rewards. You may want to define your own update_scores function for custom behavior.
-        self.update_scores(rewards, miner_uids)
     except Exception as e:
-        bt.logging.error(f"Failed to forward query with exception: {e}")
+        rewards = torch.zeros(len(miner_uids))
     finally:
-        temp_dir.cleanup()
-    
+        tempdir.cleanup()
+
+    bt.logging.info(f"Scored responses: {rewards}")
+    # Update the scores based on the rewards. You may want to define your own update_scores function for custom behavior.
+    self.update_scores(rewards, miner_uids)
