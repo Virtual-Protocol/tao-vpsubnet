@@ -1,6 +1,8 @@
 <div align="center">
 <img src="docs/images/banner-virtualxtao.png" alt="qdax_logo"></img>
 </div>
+
+
 # Virtual Protocol's Audio-to-Animation (A2A) Bittensor Subnet
 
 *News: The A2A Bittensor Subnet is now on the subnet with uid X! Please join the [Bittensor Discord](https://discord.gg/RXST8svz) and see us at Channel X! Please also check our [X]() for our vision of creating an avenue where everyone can contribute to creating the best open-source A2A models.  30th April 2024*
