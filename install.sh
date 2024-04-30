@@ -10,6 +10,7 @@ git clone https://github.com/Stanford-TML/EDGE.git
 
 echo "Downloading pre-trained model weights"
 cd EDGE
+touch __init__.py
 pip install gdown
 gdown https://drive.google.com/uc?id=1BAR712cVEqB8GR37fcEihRV_xOC-fZrZ
 
