@@ -5,7 +5,7 @@
 
 # Virtual Protocol's Audio-to-Animation (A2A) Bittensor Subnet
 
-*News: The A2A Bittensor Subnet is now on the subnet with uid X! Please join the [Bittensor Discord](https://discord.gg/RXST8svz) and see us at Channel X! Please also check our [X]() for our vision of creating an avenue where everyone can contribute to creating the best open-source A2A models.  30th April 2024*
+*News: The A2A Bittensor Subnet is now on the subnet with UID 142! Please join the [Bittensor Discord](https://discord.gg/RXST8svz) and see us at Channel t·virtual-a2a·142! Please also check our [X](https://twitter.com/virtuals_io/status/1785345062311960843) for our vision of creating an avenue where everyone can contribute to creating the best open-source A2A models.  1st May 2024*
 
 > **Note:** For more details around Virtual Protocol's Audio-to-Animation (A2A) Bittensor Subnet, please feel free to check out our [whitepaper](https://whitepaper.virtuals.io/audio-to-animation-bittensor-subnet).
 
