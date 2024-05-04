@@ -3,11 +3,11 @@
 </div>
 
 
-# Virtual Protocol's Audio-to-Animation (A2A) Bittensor Subnet
+# Virtuals Protocol's Audio-to-Animation (A2A) Bittensor Subnet
 
-*News: The A2A Bittensor Subnet is now on the subnet with UID 142! Please join the [Bittensor Discord](https://discord.gg/RXST8svz) and see us at Channel t·virtual-a2a·142! Please also check our [X](https://twitter.com/virtuals_io/status/1785345062311960843) for our vision of creating an avenue where everyone can contribute to creating the best open-source A2A models.  1st May 2024*
+*News: The A2A Bittensor Subnet is now on the mainchain with UID 25! Please join the [Bittensor Discord](https://discord.gg/RXST8svz) and see us at Channel א·alef·25! Please also check our [X](https://twitter.com/virtuals_io/status/1785345062311960843) for our vision of creating an avenue where everyone can contribute to creating the best open-source A2A models.  4th May 2024*
 
-> **Note:** For more details around Virtual Protocol's Audio-to-Animation (A2A) Bittensor Subnet, please feel free to check out our [whitepaper](https://whitepaper.virtuals.io/audio-to-animation-bittensor-subnet).
+> **Note:** For more details around Virtuals Protocol's Audio-to-Animation (A2A) Bittensor Subnet, please feel free to check out our [whitepaper](https://whitepaper.virtuals.io/audio-to-animation-bittensor-subnet).
 
 ---
 - [Introduction](#introduction)
@@ -40,7 +40,7 @@ Currently, we're at Phase 1, where audio-to-dance motions will be the focus. Val
 
 ## Mechanism
 ![mechanism](docs/images/a2a-mechanism.png)
-1. **Subnet owner:** Virtual Protocol as the subnet owner, creates the modules for miners and validators to train and evaluate the generated animation. Subnet Owner also decides on the parameters involved in evaluating the animation’s performance. 
+1. **Subnet owner:** Virtuals Protocol as the subnet owner, creates the modules for miners and validators to train and evaluate the generated animation. Subnet Owner also decides on the parameters involved in evaluating the animation’s performance. 
 2. **Miners:** Generate animations with A2A models using reference models or other models.
 3. **Validators:** Provide audio prompts to miners and evaluate the submitted animation from miners based on the parameters suggested by the subnet owner. 
 4. **Bittensor protocol:** Aggregate weights using Yuma Consensus and determine the final weights and allocation ratios for each miner and validator.
