@@ -22,5 +22,5 @@ Currently, Validators do not need much disk space and compute power. GPUs are no
 
 ## Running the validator
 
-1. Set the **VALIDATOR_LIB** environment variable to validator audio library url
+1. Set the **VALIDATOR_LIB** environment variable to validator audio library url (eg: https://gyupnvds3t.ap-southeast-1.awsapprunner.com/challenges)
 2. Run `bash scripts/start_validator.sh`
