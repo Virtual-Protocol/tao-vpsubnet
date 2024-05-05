@@ -22,6 +22,7 @@ import os
 import uuid
 import bittensor as bt
 import threading
+import bvhio
 
 app = Flask(__name__)
 
@@ -34,6 +35,16 @@ def try_remove_file(file_path):
 def remove_files(files):
     for file in files:
         try_remove_file(file)
+
+def transform_edge_bvh(bvh):
+    '''
+    Specific transformation to re-align the EDGE BVH output to match library BVH output
+    '''
+    bvh.RestPose.Scale = 1
+    bvh.RestPose.addEuler((-90, 0, 0))
+    bvh.RestPose.PositionWorld = (-40,-95,40)
+    # bvhio.writeHierarchy('edge-transformed.bvh', bvh, 1/30)
+    return bvh
 
 @app.route('/', methods=['POST'])
 def handle_inference():
@@ -55,6 +66,12 @@ def handle_inference():
     bt.logging.info(f"Post-processing {pkl_file}")
     fixed_pkl_file = postprocess.postprocess_pkl(pkl_file)
     postprocess.pkl2bvh(fixed_pkl_file, bvh_path)
+
+    # read BVH file and transform and rewrite it
+    root = bvhio.readAsHierarchy(bvh_path)
+    root = transform_edge_bvh(root)
+    bvhio.writeHierarchy(bvh_path, root, 1/30)
+
     output = None
     with open(bvh_path, 'r') as file:
         output = file.read()

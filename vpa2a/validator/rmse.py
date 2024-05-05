@@ -98,9 +98,6 @@ def compute_rmse(edge_bvh_fp, lib_bvh_fp, joint_map=edge_library_joint_map):
     
     '''
     root1 = bvhio.readAsHierarchy(edge_bvh_fp)
-    # transform edge output to normal
-    root1 = transform_edge_bvh(root1)
-
     root2 = bvhio.readAsHierarchy(lib_bvh_fp)
 
     # to find the min frame count to assess if both have different total frame count
