@@ -12,13 +12,33 @@ The evaluation protocol currently involves comparing the generated animation pro
 To evaluate similarity in motion data, we currently compute the Root Mean Square Error (RMSE) between animations. This method involves comparing two sets of motion data: the generated data and the reference data collected from real-world data. The process starts by aligning these two datasets in time and space, ensuring that they correspond to the same motion events and timelines. Each corresponding pair of data points (i.e., generated vs. reference) is then used to compute the differences, which are subsequently averaged over the entire trajectory. The RMSE is finally obtained by taking the square root of this average, providing a single value that quantifies the average magnitude of the error between the generated and reference motion data. This metric is particularly valuable because it provides a clear and direct measure of the prediction accuracy, with lower values indicating better model performance.
 
 *Speed*
-XX
+
 
 ## System Requirements
 Currently, Validators do not need much disk space and compute power. GPUs are not required. However, in future evaluation protocols and validation phases, it is recommended to have at least 50 GB of disk space and GPU with atleast 24 GB of VRAM for inference.
 
+Minimum requirements:
+- 2 cores CPU
+- 16 GB RAM
+- 30 GB harddisk
+
+# Getting started
+## Prerequisites
+
+1. Python 3.11
+2. NodeJS v21
+3. Register your Bittensor wallet as validator on netuid 25 and stake at least 100 TAO. In this example, we assume your wallet coldkey is *validator* and hotkey is *default*
+
+## Installation and Environment Setup
+
+1. Install PM2 process manager `sudo npm install -g pm2`
+2. Install Python3.11 venv module `sudo apt install python3.11-venv`
+3. Create a Python virtual environment `python3 -m venv venv`
+4. Activate the virtual environment `source venv/bin/activate`
+5. Run `pip install -r requirements.txt`
 
 ## Running the validator
 
-1. Set the **VALIDATOR_LIB** environment variable to validator audio library url (eg: https://gyupnvds3t.ap-southeast-1.awsapprunner.com/challenges)
-2. Run `bash scripts/start_validator.sh`
+1. Activate the virtual environment `source venv/bin/activate`
+2. Run `pm2 start scripts/start_validator.sh --name validator`
+3. To view the outputs, run `pm2 logs validator`

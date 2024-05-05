@@ -6,6 +6,7 @@ We reference open-source Audio-to-Animation models (MIT License), [EDGE](https:/
 The example build this repo was validated on:
  - Ubuntu 22.04
  - 64-bit Python 3.9
+ - NodeJS v21
  - 50 GB HardDisk
  - 32 GB RAM
  - NVIDIA RTX 3090
