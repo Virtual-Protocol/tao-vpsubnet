@@ -19,8 +19,28 @@ The combined score is a function of both scoring types. The speed score has a sl
 ## System Requirements
 Currently, Validators do not need much disk space and compute power. GPUs are not required. However, in future evaluation protocols and validation phases, it is recommended to have at least 50 GB of disk space and GPU with atleast 24 GB of VRAM for inference.
 
+Minimum requirements:
+- 2 cores CPU
+- 16 GB RAM
+- 30 GB harddisk
+
+# Getting started
+## Prerequisites
+
+1. Python 3.11
+2. NodeJS v21
+3. Register your Bittensor wallet as validator on netuid 25 and stake at least 100 TAO. In this example, we assume your wallet coldkey is *validator* and hotkey is *default*
+
+## Installation and Environment Setup
+
+1. Install PM2 process manager `sudo npm install -g pm2`
+2. Install Python3.11 venv module `sudo apt install python3.11-venv`
+3. Create a Python virtual environment `python3 -m venv venv`
+4. Activate the virtual environment `source venv/bin/activate`
+5. Run `pip install -r requirements.txt`
 
 ## Running the validator
 
-1. Set the **VALIDATOR_LIB** environment variable to validator audio library url (eg: https://gyupnvds3t.ap-southeast-1.awsapprunner.com/challenges)
-2. Run `bash scripts/start_validator.sh`
+1. Activate the virtual environment `source venv/bin/activate`
+2. Run `pm2 start scripts/start_validator.sh --name validator`
+3. To view the outputs, run `pm2 logs validator`
