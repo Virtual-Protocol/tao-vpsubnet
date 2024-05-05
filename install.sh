@@ -19,10 +19,10 @@ conda install -y pytorch=1.13.1 torchvision pytorch-cuda=11.6 -c pytorch -c nvid
 conda install -y -c fvcore -c iopath -c conda-forge fvcore iopath
 conda install -y pytorch3d -c pytorch3d
 
+echo "Installing postprocessor"
+git clone https://github.com/KosukeFukazawa/smpl2bvh.git
+
 cd ../../
 echo "Installing Python packages"
 pip install -r requirements.txt
 pip install -r vpa2a/requirements.txt
-
-echo "Installing postprocessor"
-git clone https://github.com/KosukeFukazawa/smpl2bvh.git
