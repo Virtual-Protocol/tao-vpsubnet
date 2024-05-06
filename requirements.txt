@@ -1,4 +1,4 @@
-bittensor
-torch
-loguru
-bvhio
+bittensor==6.12.0
+torch==2.3.0
+loguru==0.7.2
+bvhio==1.3.8
