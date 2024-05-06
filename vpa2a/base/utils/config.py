@@ -71,13 +71,6 @@ def add_args(cls, parser):
     )
 
     parser.add_argument(
-        "--neuron.epoch_length",
-        type=int,
-        help="The default epoch length (how often we set weights, measured in 12 second blocks).",
-        default=100,
-    )
-
-    parser.add_argument(
         "--mock",
         action="store_true",
         help="Mock neuron and all network components.",
