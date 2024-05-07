@@ -62,24 +62,20 @@ async def forward(self):
 
         # The dendrite client queries the network.
         responses = await self.dendrite(
-            # Send the query to selected miner axons in the network.
             axons=[self.metagraph.axons[uid] for uid in miner_uids],
-            # Construct a dummy query. This simply contains a single integer.
             synapse=synapse,
-            # All responses have the deserialize function called on them before returning.
-            # You are encouraged to define your own deserialization function.
-            deserialize=True,
+            timeout=180,
+            deserialize=False,
         )
-
         # Write responses to disk
         response_paths = []
         for idx, response in enumerate(responses):
             rpath = ""
-            if len(response) > 0:
+            if len(response.animation_output) > 0:
                 rpath = f"{temp_dir.name}/r{idx}.bvh"
                 with open(os.path.join(temp_dir.name, rpath), "w") as f:
-                    f.write(response)
-            response_paths.append(rpath)
+                    f.write(response.animation_output)
+            response_paths.append([rpath, response.dendrite.process_time])
 
         bt.logging.info(f"Rewarding with query {animation_output} and responses {response_paths}")
         
@@ -92,4 +88,6 @@ async def forward(self):
         bt.logging.error(f"Failed to forward query with exception: {e}")
     finally:
         temp_dir.cleanup()
-    
+
+
+

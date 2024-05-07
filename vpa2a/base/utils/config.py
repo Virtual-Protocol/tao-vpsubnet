@@ -71,13 +71,6 @@ def add_args(cls, parser):
     )
 
     parser.add_argument(
-        "--neuron.epoch_length",
-        type=int,
-        help="The default epoch length (how often we set weights, measured in 12 second blocks).",
-        default=100,
-    )
-
-    parser.add_argument(
         "--mock",
         action="store_true",
         help="Mock neuron and all network components.",
@@ -167,6 +160,13 @@ def add_validator_args(cls, parser):
         type=str,
         help="Trials for this neuron go in neuron.root / (wallet_cold - wallet_hot) / neuron.name. ",
         default="validator",
+    )
+
+    parser.add_argument(
+        "--neuron.epoch_length",
+        type=int,
+        help="The default epoch length (how often we set weights, measured in 12 second blocks).",
+        default=100,
     )
 
     parser.add_argument(

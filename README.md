@@ -3,11 +3,11 @@
 </div>
 
 
-# Virtual Protocol's Audio-to-Animation (A2A) Bittensor Subnet
+# Virtuals Protocol's Audio-to-Animation (A2A) Bittensor Subnet
 
-*News: The A2A Bittensor Subnet is now on the subnet with uid X! Please join the [Bittensor Discord](https://discord.gg/RXST8svz) and see us at Channel X! Please also check our [X]() for our vision of creating an avenue where everyone can contribute to creating the best open-source A2A models.  30th April 2024*
+*News: The A2A Bittensor Subnet is now on the mainchain with UID SN25! Please join the [Bittensor Discord](https://discord.gg/RXST8svz) and see us at Channel א·alef·25! Please also check our [X](https://twitter.com/virtuals_io/status/1785345062311960843) for our vision of creating an avenue where everyone can contribute to creating the best open-source A2A models.  5th May 2024*
 
-> **Note:** For more details around Virtual Protocol's Audio-to-Animation (A2A) Bittensor Subnet, please feel free to check out our [whitepaper](https://whitepaper.virtuals.io/audio-to-animation-bittensor-subnet).
+> **Note:** For more details around Virtuals Protocol's Audio-to-Animation (A2A) Bittensor Subnet, please feel free to check out our [whitepaper](https://whitepaper.virtuals.io/audio-to-animation-bittensor-subnet).
 
 ---
 - [Introduction](#introduction)
@@ -32,15 +32,15 @@ We will divide the development of A2A models into several phases, with an iterat
 
 - **Phase 1**: Focus on generating full body motions, such as dance movements, based on the audio input from a specific curated dataset.
 - **Phase 2**: Recognise the mood and genre of the audio input and adjust the generated animation accordingly.
-- **Phase 3**: Expands models capabilities beyond dance audio and motions to general animation motions (i.e. gestures etc.).
-- **Phase 4**: Optimize models for real-time interaction capabilities.
+- **Phase 3**: Widen models capabilities beyond dance audio and motions to general animation motions (i.e. gestures etc.).
+- **Phase 4**: Expand A2A model into Audio-to-Video network in order to enhance visual experiences.
 
 ### Status
 Currently, we're at Phase 1, where audio-to-dance motions will be the focus. Validators will choose a prompt from the reference library and send the prompt to miners for generation of animation outputs.
 
 ## Mechanism
 ![mechanism](docs/images/a2a-mechanism.png)
-1. **Subnet owner:** Virtual Protocol as the subnet owner, creates the modules for miners and validators to train and evaluate the generated animation. Subnet Owner also decides on the parameters involved in evaluating the animation’s performance. 
+1. **Subnet owner:** Virtuals Protocol as the subnet owner, creates the modules for miners and validators to train and evaluate the generated animation. Subnet Owner also decides on the parameters involved in evaluating the animation’s performance. 
 2. **Miners:** Generate animations with A2A models using reference models or other models.
 3. **Validators:** Provide audio prompts to miners and evaluate the submitted animation from miners based on the parameters suggested by the subnet owner. 
 4. **Bittensor protocol:** Aggregate weights using Yuma Consensus and determine the final weights and allocation ratios for each miner and validator.
