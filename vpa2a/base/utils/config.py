@@ -36,7 +36,7 @@ def check_config(cls, config: "bt.Config"):
             config.neuron.name,
         )
     )
-    
+    print("full path:", full_path)
     config.neuron.full_path = os.path.expanduser(full_path)
     if not os.path.exists(config.neuron.full_path):
         os.makedirs(config.neuron.full_path, exist_ok=True)
@@ -68,6 +68,13 @@ def add_args(cls, parser):
         type=str,
         help="Device to run on.",
         default="cuda" if torch.cuda.is_available() else "cpu",
+    )
+
+    parser.add_argument(
+        "--neuron.epoch_length",
+        type=int,
+        help="The default epoch length (how often we set weights, measured in 12 second blocks).",
+        default=200,
     )
 
     parser.add_argument(
@@ -160,13 +167,6 @@ def add_validator_args(cls, parser):
         type=str,
         help="Trials for this neuron go in neuron.root / (wallet_cold - wallet_hot) / neuron.name. ",
         default="validator",
-    )
-
-    parser.add_argument(
-        "--neuron.epoch_length",
-        type=int,
-        help="The default epoch length (how often we set weights, measured in 12 second blocks).",
-        default=100,
     )
 
     parser.add_argument(
